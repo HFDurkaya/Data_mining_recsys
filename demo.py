@@ -78,7 +78,7 @@ def get_image_embedding(model, image_path):
             return embedding.squeeze().numpy()
     return None
 
-def cluster_recommendations(candidates_df, n_clusters=3):
+def cluster_recommendations(candidates_df, n_clusters=5):
     """Cluster recommendations based on visual similarity"""
     model = load_resnet_model()
     embeddings = []
@@ -117,7 +117,7 @@ def load_model(model_type):
         model = pickle.load(f)
     return model
 
-def display_items_grid(items_df, num_cols=8, include_score=False, width=100):
+def display_items_grid(items_df, num_cols=10, include_score=False, width=100):
     """Display items in a grid with images"""
     num_items = len(items_df)
     num_rows = math.ceil(num_items / num_cols)
@@ -183,7 +183,7 @@ if st.button('Load User Data and Generate Recommendations'):
     # Generate and display recommendations
     with st.spinner('Loading model and generating recommendations...'):
         model = load_model(model_type)
-        candidates = model.recommend_items(user_id, n_items=20, filter_already_purchased=True)
+        candidates = model.recommend_items(user_id, n_items=100, filter_already_purchased=True)
         candidates_df = pd.DataFrame(candidates, columns=['article_id', 'score'])
         candidates_df = candidates_df.merge(
             articles[['article_id', 'product_type_name']], 
@@ -196,7 +196,7 @@ if st.button('Load User Data and Generate Recommendations'):
         candidates_df = cluster_recommendations(candidates_df)
     
     # Display recommendations by cluster
-    st.subheader(f"Top 20 Recommendations for User {user_id}")
+    st.subheader(f"Top 100 Recommendations for User {user_id}")
     if candidates_df is not None and 'cluster' in candidates_df.columns:
         for cluster in sorted(candidates_df['cluster'].unique()):
             st.write(f"\nCluster {cluster + 1} - Visually Similar Items:")
