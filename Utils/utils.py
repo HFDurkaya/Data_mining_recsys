@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
+# Define the path to the data folder
 def get_image_path(image_id: str) -> str:
     """
     Construct image path from image ID using forward slashes.
@@ -9,6 +10,7 @@ def get_image_path(image_id: str) -> str:
     first_three = str(image_id)[:3]
     return f"data/images/{first_three}/{str(image_id)}"
 
+# Visualize the bought items for a user
 def visualize_bought(
     user_id: str, 
     df: pd.DataFrame, 
@@ -38,6 +40,7 @@ def visualize_bought(
     plt.tight_layout()
     plt.show()
 
+# Visualize the candidate items for a user
 def visualize_candidates(
     candidates: pd.DataFrame, 
     image_ids: pd.DataFrame
