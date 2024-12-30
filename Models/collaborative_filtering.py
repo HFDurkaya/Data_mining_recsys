@@ -6,16 +6,24 @@ from scipy.sparse import coo_matrix, csr_matrix
 from scipy.sparse.linalg import svds            
 
 class ALSRecommender:
-    """
-    A recommendation system using Alternating Least Squares (ALS).
     
-    Attributes:
-        model: Implicit ALS model instance
-        sparse_matrix: Sparse user-item interaction matrix
-        customer_index: Mapping of customer IDs to matrix indices
-        article_index: Mapping of article IDs to matrix indices
-        reverse_customer_index: Reverse mapping of customer indices to IDs
-        reverse_article_index: Reverse mapping of article indices to IDs
+    """
+        Define the class ALSRecommender
+        This class is a collaborative filtering recommender based on Alternating Least Squares (ALS).
+        It has the following attributes:
+        - model (implicit.als.AlternatingLeastSquares): ALS model
+        - sparse_matrix (csr_matrix): Sparse user-item matrix
+        - customer_index (dict): Mapping of customer IDs to indices
+        - article_index (dict): Mapping of article IDs to indices
+        - reverse_customer_index (dict): Mapping of indices to customer IDs
+        - reverse_article_index (dict): Mapping of indices to article IDs
+        It has the following methods:
+        - __init__: Initialize the ALS recommender with hyperparameters
+        - _create_sparse_matrix_coo: Create a sparse user-item matrix in COO format
+        - fit: Fit the ALS model on transaction, customer, and article data
+        - recommend_items: Generate personalized recommendations for a customer
+        - save: Save the ALS model to disk
+        - load: Load the ALS model from disk
     """
     
     def __init__(
@@ -27,17 +35,7 @@ class ALSRecommender:
         num_threads=4,
         use_gpu=False
     ):
-        """
-        Initialize the ALS recommender with implicit feedback.
-        
-        Args:
-            factors: Number of latent factors
-            regularization: Regularization parameter
-            alpha: Confidence scaling parameter
-            iterations: Number of ALS iterations
-            num_threads: Number of parallel computation threads
-            use_gpu: Whether to use GPU acceleration
-        """
+
         self.model = implicit.als.AlternatingLeastSquares(
             factors=factors,
             regularization=regularization,
@@ -55,20 +53,7 @@ class ALSRecommender:
         self.reverse_article_index = None
         
     def _create_sparse_matrix_coo(self, transactions_df, customers_df, articles_df):
-        """
-        Create a sparse purchase matrix using COO format.
-        
-        Args:
-            transactions_df: DataFrame containing purchase transactions
-            customers_df: DataFrame containing customer information
-            articles_df: DataFrame containing article information
-            
-        Returns:
-            Tuple containing:
-                - Sparse matrix in CSR format
-                - Dictionary mapping customer IDs to matrix indices
-                - Dictionary mapping article IDs to matrix indices
-        """
+
         # Create index mappings
         customer_index = {
             id_: i for i, id_ in enumerate(customers_df['customer_id'])
@@ -97,14 +82,7 @@ class ALSRecommender:
         return sparse_matrix, customer_index, article_index
     
     def fit(self, transactions_df, customers_df, articles_df):
-        """
-        Fit the ALS model using transaction data.
-        
-        Args:
-            transactions_df: DataFrame containing purchase transactions
-            customers_df: DataFrame containing customer information
-            articles_df: DataFrame containing article information
-        """
+
         # Create sparse matrix and indices
         (
             self.sparse_matrix,
@@ -128,20 +106,7 @@ class ALSRecommender:
         self.model.fit(self.sparse_matrix)
 
     def recommend_items(self, customer_id, n_items=10, filter_already_purchased=True):
-        """
-        Get recommendations for a specific customer.
-        
-        Args:
-            customer_id: ID of the customer
-            n_items: Number of recommendations to generate
-            filter_already_purchased: Whether to exclude purchased items
-            
-        Returns:
-            List of tuples containing (article_id, score)
-            
-        Raises:
-            ValueError: If customer_id is not found in training data
-        """
+
         if customer_id not in self.customer_index:
             raise ValueError(f"Customer ID {customer_id} not found in training data")
             
@@ -161,52 +126,23 @@ class ALSRecommender:
         ]
     
     def save(self, path):
-        """
-        Save model to disk.
-        
-        Args:
-            path: Path where the model should be saved
-        """
+
         with open(path, 'wb') as f:
             pickle.dump(self, f)
             
     @classmethod
     def load(cls, path):
-        """
-        Load model from disk.
-        
-        Args:
-            path: Path to the saved model file
-            
-        Returns:
-            ALSRecommender: Loaded model instance
-        """
+
         with open(path, 'rb') as f:
             return pickle.load(f)
         
+        
+        
+        
 
 class SVDRecommender:
-    """
-    A recommendation system using Singular Value Decomposition (SVD).
-    
-    Attributes:
-        factors: Number of latent factors for matrix factorization
-        U: User factors matrix
-        V: Item factors matrix
-        sigma: Singular values
-        customer_index: Mapping of customer IDs to matrix indices
-        article_index: Mapping of article IDs to matrix indices
-        reverse_customer_index: Reverse mapping of customer indices to IDs
-        reverse_article_index: Reverse mapping of article indices to IDs
-    """
-    
     def __init__(self, factors=100):
-        """
-        Initialize the SVD recommender.
-        
-        Args:
-            factors: Number of latent factors for the SVD decomposition
-        """
+
         self.factors = factors
         
         # Initialize storage for learned matrices
@@ -222,20 +158,7 @@ class SVDRecommender:
         self.sparse_matrix = None
         
     def _create_sparse_matrix_coo(self, transactions_df, customers_df, articles_df):
-        """
-        Create a sparse purchase matrix using COO format.
-        
-        Args:
-            transactions_df: DataFrame containing purchase transactions
-            customers_df: DataFrame containing customer information
-            articles_df: DataFrame containing article information
-            
-        Returns:
-            Tuple containing:
-                - Sparse matrix in CSR format
-                - Dictionary mapping customer IDs to matrix indices
-                - Dictionary mapping article IDs to matrix indices
-        """
+
         # Create index mappings
         customer_index = {
             id_: i for i, id_ in enumerate(customers_df['customer_id'])
@@ -264,14 +187,7 @@ class SVDRecommender:
         return sparse_matrix, customer_index, article_index
         
     def fit(self, transactions_df, customers_df, articles_df):
-        """
-        Fit the SVD model using transaction data.
-        
-        Args:
-            transactions_df: DataFrame containing purchase transactions
-            customers_df: DataFrame containing customer information
-            articles_df: DataFrame containing article information
-        """
+
         # Create sparse matrix and indices
         (
             self.sparse_matrix,
@@ -303,20 +219,7 @@ class SVDRecommender:
         self.V = Vt.T
         
     def recommend_items(self, customer_id, n_items=10, filter_already_purchased=True):
-        """
-        Get recommendations for a specific customer.
-        
-        Args:
-            customer_id: ID of the customer
-            n_items: Number of recommendations to generate
-            filter_already_purchased: Whether to exclude purchased items
-            
-        Returns:
-            List of tuples containing (article_id, score)
-            
-        Raises:
-            ValueError: If customer_id is not found in training data
-        """
+
         if customer_id not in self.customer_index:
             raise ValueError(f"Customer ID {customer_id} not found in training data")
             
@@ -340,25 +243,10 @@ class SVDRecommender:
         ]
 
     def save(self, path):
-        """
-        Save the model to disk.
-        
-        Args:
-            path: Path where the model should be saved
-        """
         with open(path, 'wb') as f:
             pickle.dump(self, f)
     
     @classmethod
     def load(cls, path):
-        """
-        Load a saved model from disk.
-        
-        Args:
-            path: Path to the saved model file
-            
-        Returns:
-            SVDRecommender: Loaded model instance
-        """
         with open(path, 'rb') as f:
             return pickle.load(f)

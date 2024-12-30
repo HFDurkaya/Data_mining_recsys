@@ -5,7 +5,25 @@ import pickle
 from Models.numerical_CBF import NumericalCBF
 from Models.collaborative_filtering import ALSRecommender
 
+
+
 class HybridRecommender:
+    
+    """
+        Define the class HybridRecommender
+        This class is a hybrid recommendation system that combines collaborative filtering and content-based filtering.
+        It has the following attributes:
+        - alpha (float): Weight for ALS recommendations
+        - als_recommender (ALSRecommender): Collaborative filtering recommender
+        - cbf_recommender (NumericalCBF): Content-based filtering recommender
+        It has the following methods:
+        - __init__: Initialize the hybrid recommender with hyperparameters
+        - fit: Fit the hybrid recommender on transaction, customer, and article data
+        - recommend_items: Generate personalized recommendations for a customer
+        - save: Save the hybrid model to disk
+        - load: Load the hybrid model from disk
+    """
+    
     def __init__(
         self,
         alpha=0.5,  # Weight for ALS recommendations
@@ -19,27 +37,13 @@ class HybridRecommender:
             'batch_size': 256
         }
     ):
-        """
-        Initialize hybrid recommender combining ALS and CBF approaches.
-        
-        Args:
-            alpha: Weight for ALS recommendations (1-alpha for CBF)
-            als_params: Parameters for ALS model
-            cbf_params: Parameters for CBF model
-        """
+
         self.alpha = alpha
         self.als_recommender = ALSRecommender(**als_params)
         self.cbf_recommender = NumericalCBF(**cbf_params)
         
     def fit(self, transactions_df, customers_df, articles_df):
-        """
-        Fit both recommender models.
-        
-        Args:
-            transactions_df: DataFrame with purchase history
-            customers_df: DataFrame with customer information
-            articles_df: DataFrame with article information
-        """
+
         # Fit both models
         print("Fitting ALS model...")
         self.als_recommender.fit(transactions_df, customers_df, articles_df)
@@ -50,17 +54,7 @@ class HybridRecommender:
         return self
         
     def recommend_items(self, customer_id, n_items=10, filter_already_purchased=True):
-        """
-        Generate hybrid recommendations.
-        
-        Args:
-            customer_id: ID of the customer
-            n_items: Number of recommendations
-            filter_already_purchased: Whether to filter purchased items
-            
-        Returns:
-            List of tuples containing (article_id, score)
-        """
+
         try:
             # Get ALS recommendations
             als_recs = self.als_recommender.recommend_items(

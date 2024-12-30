@@ -1,10 +1,10 @@
 """
-Recommender System Evaluation Module
-
-This module provides functionality for evaluating various recommender system models
-using metrics such as Recall@K, catalog coverage, and recommendation diversity.
+# This python script is used to evaluate the performance of the recommendation system models.
+# The script loads the data, trains the model, and evaluates the model using precision, recall, catalog coverage, and diversity metrics.
+# The evaluation results are saved to a JSON file and logged to Weights & Biases for tracking.
+# The script can be run in two modes: single and sweep. In single mode, a single model configuration is evaluated, while in sweep mode, a grid search is performed over multiple configurations.
+# The script uses a configuration file in YAML format to specify the model parameters and run mode.
 """
-
 import os
 import time
 from typing import Dict, List, Optional, Set, Tuple, Union, Any

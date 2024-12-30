@@ -9,7 +9,33 @@ import warnings
 import pickle
 warnings.filterwarnings('ignore')
 
+
 class NumericalCBF:
+
+    """
+        Define the class NumericalCB
+        This class is a content-based filtering recommender system that uses numerical features for recommendations.
+        It has the following attributes:
+        - device (torch.device): Device to use for computations (CPU or GPU)
+        - batch_size (int): Batch size for similarity computations
+        - output_dir (str): Directory to save recommendation files
+        - scaler (StandardScaler): Scaler for numerical features
+        - article_ids (np.array): Array of article IDs
+        - article_id_to_idx (dict): Mapping of article IDs to indices
+        - user_histories (dict): Mapping of user IDs to purchase histories
+        - popularity_scores (np.array): Array of popularity scores for articles
+        - feature_tensor (torch.Tensor): Tensor of scaled numerical features
+        It has the following methods:
+        - __init__: Initialize the numerical content-based filtering model
+        - _get_device: Get the torch device for computations
+        - _get_timestamp: Get formatted timestamp for filenames
+        - fit: Fit the numerical content-based filtering model on transaction, customer, and article data
+        - batch_recommend_items: Generate recommendations for multiple users in batches
+        - recommend_items: Generate recommendations for a single user
+        - save: Save the numerical content-based filtering model to disk
+        - load: Load the numerical content-based filtering model from disk
+    """
+
     def __init__(self, device='cuda', batch_size=256, output_dir='recommendations'):
         self.device = self._get_device(device)
         self.batch_size = batch_size
