@@ -1,6 +1,6 @@
 # H&M Personalized Fashion Recommendations
 
-This repository contains a personalized fashion recommendation system for H&M customers. Main aim of the project is to create a visually seperated and personalized recommendation system with different emthods and compare them. This work has been done for the BLG 607 Data Mining course which is given by the Prof. DR Şule Gündüz Öğüdücü in Istanbul Technical University.
+This repository contains a personalized fashion recommendation system for H&M products dataset. Main aim of the project is to create a visually seperated and personalized recommendation system with different methods and compare them. This work has been done for the BLG 607 Data Mining course which is given by the Prof. Dr. Şule Gündüz Öğüdücü in Istanbul Technical University.
 
 ## Requirements
 
@@ -22,7 +22,7 @@ The dataset used for this project is H&M Personalized Fashion Recommendations wh
 
 - `customers.csv`: metadata for each customer_id in dataset
 - `articles.csv`: detailed metadata for each article_id available for purchase
-- `transactions.csv`: he training data, consisting of the purchases each customer for each date, as well as additional information. Duplicate rows correspond to multiple purchases of the same item. Your task is to predict the article_ids each customer will purchase during the 7-day period immediately after the training data period.
+- `transactions.csv`: he training data, consisting of the purchases each customer for each date, as well as additional information. Duplicate rows correspond to multiple purchases of the same item.
 - `images\`: A folder of images corresponding to each article_id; images are placed in subfolders starting with the first three digits of the article_id; note, not all article_id values have a corresponding image.
 
 ## Model Weights
@@ -43,7 +43,7 @@ To run the recommendation system, follow these steps:
     ```bash
     pip install implicit torch streamlit pandas etc.
     ```
-3. Run the notebook `data_analyaia.ipynb` to make exploratory data analysis on  dataset. This notebook includes steps for understanding the dataset in a deeper manner.
+3. Run the notebook `data_analysis.ipynb` to make exploratory data analysis on  dataset. This notebook includes steps for understanding the dataset in a deeper manner.
 
 4. Run the notebook `dataset_optimization.ipynb` to preprocess dataset. This notebook includes steps for data preprocessing, csv files will be converted to pickle files after this notebook.
 
