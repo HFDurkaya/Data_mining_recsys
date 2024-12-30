@@ -59,7 +59,20 @@ def load_resnet_model():
     model.eval()
     return model
 
-# Functions for clustering and recommendations
+import streamlit as st
+import os
+import pickle
+import pandas as pd
+import math
+import torch
+import torchvision.transforms as transforms
+import torchvision.models as models
+from PIL import Image
+from sklearn.cluster import KMeans
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+import random
+
 def assign_recommendations_to_clusters(purchase_embeddings, rec_embeddings, purchase_clusters):
     """
     Assign each recommended item to the most similar purchase cluster
@@ -90,7 +103,6 @@ def assign_recommendations_to_clusters(purchase_embeddings, rec_embeddings, purc
     
     return np.array(rec_cluster_assignments), np.array(rec_cluster_similarities)
 
-
 def determine_optimal_clusters(n_purchases):
     """
     Determine the optimal number of clusters based on purchase history size
@@ -106,8 +118,6 @@ def determine_optimal_clusters(n_purchases):
     else:
         return 6
 
-# Main functions
-# Cluster purchase history and assign recommendations to clusters
 def cluster_and_recommend(user_transactions, candidates_df):
     """
     Cluster purchase history and associate recommendations with purchase clusters
@@ -265,7 +275,6 @@ def load_model(model_type):
         model = pickle.load(f)
     return model
 
-# Display items in a grid with images
 def display_items_grid(items_df, num_cols=10, include_score=False, width=100):
     """Display items in a grid with images"""
     num_items = len(items_df)
@@ -283,11 +292,20 @@ def display_items_grid(items_df, num_cols=10, include_score=False, width=100):
                     image_path = f"data/images/{folder_prefix}/{article_id}.jpg"
                     
                     if os.path.exists(image_path):
+                        scores_text = ""
+                        if include_score:
+                            if isinstance(item['score'], str):  # Already formatted string
+                                scores_text = item['score']
+                            else:
+                                rec_score = f"Rec Score: {item['score']:.3f}"
+                                sim_score = f"Sim Score: {item['cluster_similarity']:.3f}" if 'cluster_similarity' in item else ""
+                                scores_text = f"{rec_score}\n{sim_score}"
+                        
                         caption = f"""
                             ID: {item['article_id']}
                             {item['product_type_name']}
                             {item['t_dat'].date() if 't_dat' in item else ''}
-                            {f"Score: {item['score']:.3f}" if include_score else ''}
+                            {scores_text}
                             {f"Cluster: {int(item['cluster'])+1}" if 'cluster' in item else ''}
                         """
                         st.image(image_path, caption=caption, width=width)
@@ -355,7 +373,9 @@ if st.button('Load User Data and Generate Recommendations'):
             st.write(f"\nRecommendations similar to Purchase Cluster {cluster + 1}:")
             cluster_recs = clustered_recommendations[
                 clustered_recommendations['cluster'] == cluster
-            ].sort_values('cluster_similarity', ascending=False)
+            ].sort_values(['cluster_similarity', 'score'], ascending=[False, False])
+            
+            # Display sorted recommendations with both scores
             display_items_grid(cluster_recs, include_score=True)
             
             # Show cluster statistics
