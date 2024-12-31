@@ -27,7 +27,7 @@ def load_random_users(n_users=25):
     user_purchase_counts = transactions['customer_id'].value_counts()
     filtered_users = user_purchase_counts[
         (user_purchase_counts > 20) & 
-        (user_purchase_counts < 40)
+        (user_purchase_counts < 50)
     ].index.tolist()
     # Randomly select 25 users
     random_users = random.sample(filtered_users, min(n_users, len(filtered_users)))

@@ -25,6 +25,8 @@ The dataset used for this project is H&M Personalized Fashion Recommendations wh
 - `transactions.csv`: he training data, consisting of the purchases each customer for each date, as well as additional information. Duplicate rows correspond to multiple purchases of the same item.
 - `images\`: A folder of images corresponding to each article_id; images are placed in subfolders starting with the first three digits of the article_id; note, not all article_id values have a corresponding image.
 
+### For demo purposes, you can use given filtered dataset in the below link. This dataset is filtered to have 100 users and their corresponding articles, images, transactions. Use the same weights. Demo Data: https://drive.google.com/drive/folders/1gQkkSdSpAa1qPzG8dyiKgcIPzFhTw4Gf?usp=drive_link
+
 ## Model Weights
 
 The pre-trained model weights msut be stored in the `weights` directory.  You can load these weights to make predictions without retraining the model. Weights can be downloaded from https://drive.google.com/drive/folders/1tY_NE-y1ReUgyW8NgUi_R-D7NKTRtal2?usp=sharing
